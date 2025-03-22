@@ -3,10 +3,10 @@ import Header from './Header';
 import PackageSearch from './PackageSearch';
 import RecentShipping from './RecentShipping';
 import TabBar from './TabBar';
-import HomeContent from './HomeContent';
-import CalendarContent from './CalendarContent';
+//import CalendarContent from './CalendarContent';
 import NotificationsContent from './NotificationsContent';
 import ProfileContent from './ProfileContent';
+import CalendarContent from './CalendarContent';
 
 function Home() {
   const [activeTab, setActiveTab] = useState('home');

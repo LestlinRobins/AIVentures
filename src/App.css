@@ -682,3 +682,313 @@ input:checked + .slider:before {
     margin-left: 44px;
   }
 }
+.content-container {
+  padding-bottom: 20px;
+}
+
+.content-container h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.content-card {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+/* Calendar styles */
+.calendar-placeholder {
+  padding: 20px;
+  text-align: center;
+  color: var(--secondary-text);
+}
+
+/* Notification styles */
+.notification-item {
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item.unread {
+  background-color: rgba(255, 127, 39, 0.1);
+  border-radius: 8px;
+  padding: 12px 8px;
+  margin: 8px 0;
+}
+
+.notification-message {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.notification-time {
+  margin: 0;
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+/* Profile styles */
+.profile-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--card-background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 12px;
+}
+
+.profile-header h2 {
+  margin: 0 0 4px 0;
+}
+
+.profile-header p {
+  margin: 0;
+  color: var(--secondary-text);
+  font-size: 14px;
+}
+
+.profile-section h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.profile-option {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.profile-option:last-child {
+  border-bottom: none;
+}
+
+.profile-option-icon {
+  margin-right: 12px;
+  color: var(--secondary-text);
+}
+
+.profile-option-text {
+  flex: 1;
+}
+
+.profile-option-text p {
+  margin: 0;
+}
+
+.profile-option-arrow {
+  font-size: 20px;
+  color: var(--secondary-text);
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  padding: 12px;
+  background-color: var(--background-color);
+  border-radius: 8px;
+  color: #ff3b30;
+  cursor: pointer;
+}
+
+.logout-button span {
+  margin-left: 8px;
+}
+
+/* Partner content styles */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-button {
+  background-color: var(--card-background);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary-text);
+  cursor: pointer;
+}
+
+.filter-button.active {
+  color: #007aff;
+  background-color: rgba(0, 122, 255, 0.2);
+}
+
+.filter-options {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.filter-option {
+  margin-right: 16px;
+  margin-bottom: 8px;
+}
+
+.shipment-item.detailed {
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 12px;
+  border: none;
+}
+
+.shipment-date {
+  font-size: 12px;
+  color: var(--secondary-text);
+  margin-top: 2px;
+}
+
+.shipment-status.in-transit {
+  color: #007aff;
+}
+
+.shipment-status.delivered {
+  color: var(--orange-color);
+}
+
+.shipment-status.processing {
+  color: #ffcc00;
+}
+
+.shipment-status.cancelled {
+  color: #ff3b30;
+}
+
+/* Customer styles */
+.customer-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  margin-bottom: 12px;
+}
+
+.customer-avatar {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+}
+
+.customer-info {
+  flex: 1;
+}
+
+.customer-name {
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.customer-email {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.customer-shipments {
+  text-align: center;
+}
+
+.customer-shipments span {
+  display: block;
+  font-weight: 600;
+  font-size: 16px;
+  color: #007aff;
+}
+
+.customer-shipments small {
+  display: block;
+  font-size: 10px;
+  color: var(--secondary-text);
+}
+
+/* Settings styles */
+.settings-section h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.settings-option {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.settings-option:last-child {
+  border-bottom: none;
+}
+
+.settings-option-icon {
+  margin-right: 12px;
+  color: var(--secondary-text);
+}
+
+.settings-option-text {
+  flex: 1;
+}
+
+.settings-option-text p {
+  margin: 0;
+}
+
+.settings-option-arrow {
+  font-size: 20px;
+  color: var(--secondary-text);
+}
+
+.settings-option-toggle {
+  margin-left: 12px;
+}
+
+.switch.small {
+  width: 36px;
+  height: 20px;
+}
+
+.switch.small .slider:before {
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+}
+
+.switch.small input:checked + .slider:before {
+  transform: translateX(16px);
+}
