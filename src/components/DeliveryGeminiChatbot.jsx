@@ -1,10 +1,11 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
-const DeliveryGeminiChatbot = () => {
+const MinimalistDeliveryChatbot = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi there! I'm your delivery assistant powered by Gemini. How can I help you today?",
+      text: "Welcome to our delivery assistant. How can I help you today?",
       sender: "bot"
     }
   ]);
@@ -12,11 +13,7 @@ const DeliveryGeminiChatbot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef(null);
-  
-  // You would store your Gemini API key securely, typically in environment variables
-  const GEMINI_API_KEY = import.meta.VITE_GEMINI_API_KEY;
 
-  // Auto-scroll to bottom of messages
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
@@ -34,14 +31,13 @@ const DeliveryGeminiChatbot = () => {
   };
 
   const generateGeminiPrompt = (query, conversationHistory) => {
-    // Create a structured prompt for Gemini to understand the context and purpose
     return `
-You are an AI assistant for a delivery optimization app with the following innovative features:
-- Route optimization using real-time traffic data, weather conditions, and road conditions
-- Precise delivery time prediction using historical data and AI analysis
+You are an AI assistant for a delivery optimization app with the following features:
+- Route optimization using real-time traffic and weather data
+- Precise delivery time prediction using historical data
 - Priority delivery for hospitals and elderly customers
-- AI-based vehicle selection based on efficiency, route conditions, and package details
-- Reliable delivery with driver transfer capability in case of issues
+- AI-based vehicle selection for optimal efficiency
+- Reliable delivery with driver transfer capability
 - Real-time updates and tracking
 
 User's recent conversation: 
@@ -49,7 +45,7 @@ ${conversationHistory.map(msg => `${msg.sender === "user" ? "User" : "Assistant"
 
 User's current question: ${query}
 
-Please provide a helpful, friendly, and informative response focused on delivery services.
+Please provide a professional, concise, and helpful response about our delivery services.
 `;
   };
 
@@ -57,43 +53,11 @@ Please provide a helpful, friendly, and informative response focused on delivery
     try {
       setLoading(true);
       
-      // Get recent conversation history (last 5 messages) for context
+      // Get recent conversation history for context
       const recentHistory = messages.slice(-5);
       
       // Create the prompt for Gemini
       const prompt = generateGeminiPrompt(query, recentHistory);
-      
-      // This is where you'd make the actual API call to Gemini
-      // For now, we'll simulate the API call with a timeout and pre-defined responses
-      
-      // Example of how the Gemini API call would look:
-      /*
-      const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${GEMINI_API_KEY}`
-        },
-        body: JSON.stringify({
-          contents: [
-            {
-              parts: [
-                { text: prompt }
-              ]
-            }
-          ],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          }
-        })
-      });
-      
-      const data = await response.json();
-      const aiResponse = data.candidates[0].content.parts[0].text;
-      */
       
       // Simulated response for demonstration
       return new Promise((resolve) => {
@@ -101,37 +65,31 @@ Please provide a helpful, friendly, and informative response focused on delivery
           let aiResponse = "";
           const lowerQuery = query.toLowerCase();
           
-          if (lowerQuery.includes('track') || lowerQuery.includes('where') || lowerQuery.includes('status') || lowerQuery.includes('update')) {
-            aiResponse = "To check your delivery status, I need your order number. Could you provide that for me? With Gemini's advanced tracking, I can give you precise location and ETA information.";
-          } else if (lowerQuery.includes('route') || lowerQuery.includes('traffic') || lowerQuery.includes('delay')) {
-            aiResponse = "Our Gemini-powered system optimizes routes in real-time, analyzing traffic patterns, weather forecasts, and road conditions. Routes are refreshed every 10-15 minutes, and our AI can predict potential delays before they happen!";
-          } else if (lowerQuery.includes('weather') || lowerQuery.includes('rain') || lowerQuery.includes('storm')) {
-            aiResponse = "Gemini helps us monitor weather patterns with remarkable accuracy. We analyze current conditions and forecasts to adjust delivery routes proactively, keeping your packages on schedule despite weather events.";
-          } else if (lowerQuery.includes('priority') || lowerQuery.includes('urgent') || lowerQuery.includes('emergency')) {
-            aiResponse = "Our priority system uses Gemini's contextual understanding to automatically identify and expedite critical deliveries to hospitals and elderly customers. For urgent deliveries, we can adjust priorities in real-time across our entire fleet.";
-          } else if (lowerQuery.includes('vehicle') || lowerQuery.includes('transport')) {
-            aiResponse = "Gemini analyzes multiple factors to select the optimal vehicle for each delivery - package dimensions, weight, route conditions, fuel efficiency, and even carbon footprint. This maximizes efficiency while minimizing environmental impact.";
-          } else if (lowerQuery.includes('driver') || lowerQuery.includes('breakdown') || lowerQuery.includes('accident')) {
-            aiResponse = "If a delivery is at risk due to vehicle issues or traffic incidents, Gemini instantly recalculates and can transfer the package to another nearby driver without disrupting their existing route optimization.";
-          } else if (lowerQuery.includes('thank')) {
-            aiResponse = "You're welcome! I'm happy to help with any other questions about our delivery services. Gemini helps me understand your needs better to provide the most relevant information.";
-          } else if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
-            aiResponse = "Hello! I'm your Gemini-powered delivery assistant. How can I help optimize your delivery experience today?";
-          } else if (lowerQuery.includes('time') || lowerQuery.includes('eta') || lowerQuery.includes('when')) {
-            aiResponse = "Gemini's predictive algorithms analyze historical delivery data for each specific location, accounting for factors like building access, security wait times, elevator usage, and even time of day patterns to provide remarkably accurate delivery windows.";
-          } else if (lowerQuery.includes('how') && lowerQuery.includes('work')) {
-            aiResponse = "Our system leverages Gemini's advanced AI to optimize every aspect of delivery. It processes real-time data from multiple sources, predicts potential issues, and makes smart decisions about routing, vehicle selection, and scheduling - all to ensure your packages arrive on time and efficiently.";
+          if (lowerQuery.includes('track') || lowerQuery.includes('where') || lowerQuery.includes('status')) {
+            aiResponse = "I can provide real-time tracking information. Please share your order number to view the current status and estimated delivery time.";
+          } else if (lowerQuery.includes('route') || lowerQuery.includes('traffic')) {
+            aiResponse = "Our system automatically optimizes routes using real-time traffic and weather data, refreshing every 10-15 minutes to ensure on-time delivery.";
+          } else if (lowerQuery.includes('priority') || lowerQuery.includes('urgent')) {
+            aiResponse = "We prioritize deliveries to hospitals and elderly customers automatically. For other urgent deliveries, we can adjust priorities upon request.";
+          } else if (lowerQuery.includes('vehicle')) {
+            aiResponse = "Our AI selects the optimal vehicle for each delivery based on package specifications, route conditions, and efficiency factors to minimize costs and environmental impact.";
+          } else if (lowerQuery.includes('delay') || lowerQuery.includes('late')) {
+            aiResponse = "If a delay occurs, our system immediately recalculates and may transfer the package to another driver to maintain delivery schedules. You'll receive real-time notifications of any changes.";
+          } else if (lowerQuery.includes('time') || lowerQuery.includes('eta')) {
+            aiResponse = "We provide precise delivery windows by analyzing historical data for each location, including factors like building access time and security procedures.";
+          } else if (lowerQuery.includes('feature') || lowerQuery.includes('what') && lowerQuery.includes('do')) {
+            aiResponse = "Our delivery service features AI-driven route optimization, precise ETAs, priority handling for critical deliveries, smart vehicle selection, and automatic rerouting to avoid delays.";
           } else {
-            aiResponse = "I understand you're asking about " + query + ". As your Gemini-powered delivery assistant, I'm continuously learning to better assist with all delivery-related questions. Could you provide more details about what specific information you need?";
+            aiResponse = "I understand you're asking about " + query + ". To best assist you, could you provide more specific details about your delivery needs?";
           }
           
           resolve(aiResponse);
-        }, 1500);
+        }, 1200);
       });
       
     } catch (error) {
       console.error("Error with Gemini API:", error);
-      return "I'm having trouble connecting to my AI services right now. Please try again in a moment.";
+      return "I'm having trouble connecting to our AI services right now. Please try again shortly.";
     } finally {
       setLoading(false);
     }
@@ -141,7 +99,6 @@ Please provide a helpful, friendly, and informative response focused on delivery
     e.preventDefault();
     if (inputValue.trim() === '') return;
 
-    // Add user message
     const userMessage = {
       id: messages.length + 1,
       text: inputValue,
@@ -153,17 +110,14 @@ Please provide a helpful, friendly, and informative response focused on delivery
     setLoading(true);
     
     try {
-      // Get response from Gemini
       const response = await processQueryWithGemini(inputValue);
       
-      // Add bot response
       setMessages(prev => [...prev, {
         id: prev.length + 1,
         text: response,
         sender: "bot"
       }]);
     } catch (error) {
-      // Handle errors
       setMessages(prev => [...prev, {
         id: prev.length + 1,
         text: "Sorry, I encountered an error. Please try again later.",
@@ -179,83 +133,58 @@ Please provide a helpful, friendly, and informative response focused on delivery
       {/* Chat toggle button */}
       <button 
         onClick={toggleChatbot}
-        className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center"
+        className="bg-gray-800 text-white p-3 rounded-full shadow-md"
       >
         {isOpen ? (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
           </svg>
         ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z" clipRule="evenodd" />
           </svg>
         )}
       </button>
 
       {/* Chatbot interface */}
       {isOpen && (
-        <div className="absolute bottom-16 right-0 w-80 md:w-96 bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col max-h-96">
+        <div className="absolute bottom-14 right-0 w-80 md:w-96 bg-white rounded-md shadow-lg border border-gray-200 flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="bg-blue-600 text-white px-4 py-3 rounded-t-lg flex justify-between items-center">
-            <div className="flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              <h3 className="font-medium">Delivery Assistant (Gemini)</h3>
-            </div>
-            <button onClick={toggleChatbot} className="text-white hover:text-gray-200">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <div className="bg-gray-800 text-white px-4 py-3 flex justify-between items-center">
+            <h3 className="font-medium text-sm">Delivery Assistant</h3>
+            <button onClick={toggleChatbot} className="text-gray-300 hover:text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
               </svg>
             </button>
           </div>
           
           {/* Messages area */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 p-3 overflow-y-auto bg-gray-50 h-64">
             {messages.map((message) => (
               <div 
                 key={message.id} 
-                className={`mb-4 flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+                className={`mb-3 flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
               >
-                {message.sender === "bot" && (
-                  <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
                 <div 
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
+                  className={`px-3 py-2 rounded-md ${
                     message.sender === "user" 
-                      ? "bg-blue-600 text-white rounded-br-none" 
-                      : "bg-gray-100 text-gray-800 rounded-bl-none"
+                      ? "bg-gray-800 text-white" 
+                      : "bg-white text-gray-800 border border-gray-200"
                   }`}
+                  style={{ maxWidth: '80%' }}
                 >
-                  {message.text}
+                  <p className="text-sm">{message.text}</p>
                 </div>
-                {message.sender === "user" && (
-                  <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center ml-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                )}
               </div>
             ))}
             {loading && (
-              <div className="flex justify-start mb-4">
-                <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center mr-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
-                    <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div className="bg-gray-100 text-gray-800 px-4 py-2 rounded-lg rounded-bl-none flex items-center">
+              <div className="flex justify-start mb-3">
+                <div className="bg-white text-gray-800 px-3 py-2 rounded-md border border-gray-200" style={{ maxWidth: '80%' }}>
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0s" }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                    <div className="w-2 h-2 bg-blue-600 rounded-full animate-bounce" style={{ animationDelay: "0.4s" }}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse"></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: "0.2s" }}></div>
+                    <div className="w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse" style={{ animationDelay: "0.4s" }}></div>
                   </div>
                 </div>
               </div>
@@ -264,22 +193,22 @@ Please provide a helpful, friendly, and informative response focused on delivery
           </div>
           
           {/* Input area */}
-          <form onSubmit={handleSubmit} className="border-t border-gray-200 p-2">
-            <div className="flex items-center">
+          <form onSubmit={handleSubmit} className="bg-white p-2 border-t border-gray-200">
+            <div className="flex items-center rounded-md bg-gray-100 px-2">
               <input
                 type="text"
                 value={inputValue}
                 onChange={handleInputChange}
-                placeholder="Ask about your delivery..."
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                placeholder="Type your question..."
+                className="flex-1 py-2 px-1 bg-transparent border-none focus:outline-none text-sm"
               />
               <button 
                 type="submit"
                 disabled={inputValue.trim() === '' || loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-r-md disabled:opacity-50"
+                className={`ml-1 p-1 rounded-md ${inputValue.trim() === '' || loading ? 'text-gray-400' : 'text-gray-600 hover:bg-gray-200'}`}
               >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
                 </svg>
               </button>
             </div>
@@ -290,4 +219,4 @@ Please provide a helpful, friendly, and informative response focused on delivery
   );
 };
 
-export default DeliveryGeminiChatbot;
+export default MinimalistDeliveryChatbot;

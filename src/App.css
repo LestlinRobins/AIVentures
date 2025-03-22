@@ -1,4 +1,4 @@
-#root {
+/* /* #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
@@ -39,4 +39,646 @@
 
 .read-the-docs {
   color: #888;
+} */
+
+
+/*
+
+:root{
+  --background-color: #1c1c1e;
+  --card-background: #2c2c2e;
+  --orange-color: #ff7f27;
+  --text-color: #ffffff;
+  --secondary-text: #8e8e93;
+}
+
+body {
+  
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.app-container {
+  margin: 0 auto;
+  padding: 16px;
+  background-color: var(--background-color);
+  min-height: 100vh;
+  position: relative;
+  width: 100%;
+}
+
+.view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin: 0 8px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-background);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--orange-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.home-container {
+  padding-bottom: 70px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  margin-right: 12px;
+}
+
+.avatar-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--card-background);
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.user-date {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.points-container {
+  background-color: var(--card-background);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.points {
+  font-size: 12px;
+}
+
+.partner-stats-container {
+  background-color: var(--card-background);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.orange-banner {
+  height: 100px;
+  background-color: var(--orange-color);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.package-search {
+  margin-bottom: 24px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.search-icon {
+  margin-right: 8px;
+}
+
+.search-container input {
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  flex: 1;
+  outline: none;
+}
+
+.recent-shipping {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.recent-shipping h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.shipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shipment-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.shipment-info {
+  display: flex;
+  align-items: center;
+}
+
+.shipment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  margin-right: 12px;
+}
+
+.shipment-status {
+  font-size: 12px;
+  color: var(--orange-color);
+}
+
+.shipment-status.completed {
+  color: var(--orange-color);
+}
+
+.shipment-status.in-progress {
+  color: #ffcc00;
+}
+
+.shipment-status.pending {
+  color: #ff3b30;
+}
+
+.shipment-customer {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--card-background);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.tab.active {
+  color: var(--orange-color);
+}
+
+/* Partner view styles */
+/*.partner .avatar-circle {
+  background-color: #3a3a3c;
+}
+
+.orange-banner.partner {
+  background-color: #007aff;
+}
+
+.tab-bar.partner {
+  background-color: #3a3a3c;
+}
+
+.tab-bar.partner .tab.active {
+  color: #007aff;
+}
+
+.package-search.partner .search-container {
+  background-color: #3a3a3c;
+}
+
+.recent-shipping.partner {
+  background-color: #3a3a3c;
+} */
+
+
+
+:root {
+  --background-color: #1c1c1e;
+  --card-background: #2c2c2e;
+  --orange-color: #ff7f27;
+  --text-color: #ffffff;
+  --secondary-text: #8e8e93;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  display: flex;
+  justify-content: center;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: var(--background-color);
+  min-height: 100vh;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.view-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  color: var(--text-color);
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
+  margin: 0 8px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--card-background);
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--orange-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.slider.round {
+  border-radius: 24px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.home-container {
+  padding-bottom: 70px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--card-background);
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.user-date {
+  font-size: 12px;
+  color: var(--secondary-text);
+}
+
+.points-container {
+  background-color: var(--card-background);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.points {
+  font-size: 12px;
+}
+
+.partner-stats-container {
+  background-color: var(--card-background);
+  padding: 8px 16px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.orange-banner {
+  height: 100px;
+  background-color: var(--orange-color);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.package-search {
+  margin-bottom: 24px;
+}
+
+.search-container {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 12px 16px;
+}
+
+.search-container svg {
+  margin-right: 8px;
+}
+
+.search-container input {
+  background-color: transparent;
+  border: none;
+  color: var(--text-color);
+  flex: 1;
+  outline: none;
+  font-size: 16px;
+}
+
+.search-container input::placeholder {
+  color: var(--secondary-text);
+}
+
+.recent-shipping {
+  background-color: var(--card-background);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.recent-shipping h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.shipment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.shipment-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.shipment-info {
+  display: flex;
+  align-items: center;
+}
+
+.shipment-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shipment-id {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.shipment-status {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.shipment-status.completed {
+  color: var(--orange-color);
+}
+
+.shipment-status.in-progress {
+  color: #ffcc00;
+}
+
+.shipment-status.pending {
+  color: #ff3b30;
+}
+
+.shipment-customer {
+  font-size: 12px;
+  color: var(--secondary-text);
+  margin-top: 4px;
+}
+
+.tab-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--card-background);
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  z-index: 10;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 16px;
+  cursor: pointer;
+  color: var(--secondary-text);
+}
+
+.tab.active {
+  color: var(--orange-color);
+}
+
+/* Partner view styles */
+.partner .avatar {
+  background-color: #3a3a3c;
+}
+
+.orange-banner.partner {
+  background-color: #007aff;
+}
+
+.tab-bar.partner {
+  background-color: #3a3a3c;
+}
+
+.tab-bar.partner .tab.active {
+  color: #007aff;
+}
+
+.package-search.partner .search-container {
+  background-color: #3a3a3c;
+}
+
+.recent-shipping.partner {
+  background-color: #3a3a3c;
+}
+
+/* Responsive styles */
+@media (max-width: 480px) {
+  .app-container {
+    padding: 12px;
+  }
+  
+  .orange-banner {
+    height: 80px;
+  }
+  
+  .tab-bar {
+    padding: 8px 0;
+  }
+  
+  .tab {
+    padding: 8px 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .points-container, .partner-stats-container {
+    margin-top: 12px;
+    align-self: flex-end;
+  }
+  
+  .shipment-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .shipment-status {
+    margin-top: 8px;
+    margin-left: 44px;
+  }
 }

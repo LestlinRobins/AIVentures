@@ -18,6 +18,7 @@
     "cors": "^2.8.5",
     "create-vite": "^6.3.1",
     "firebase": "^11.5.0",
+    "lucide-react": "^0.483.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
