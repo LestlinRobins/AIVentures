@@ -1,32 +1,33 @@
-import { useState } from 'react';
-import Header from './Header_partner';
-import PackageSearch from './PackageSearch_partner';
-import RecentShipping from './RecentShipping_partner';
-import TabBar from './TabBar_partner';
-import DashboardContent from './DashboardContent';
-import ShipmentsContent from './ShipmentsContent';
-import CustomersContent from './CustomersContent';
-import SettingsContent from './SettingsContent';
-
+import { useState } from "react";
+import Header from "./Header_partner";
+import PackageSearch from "./PackageSearch_partner";
+import RecentShipping from "./RecentShipping_partner";
+import TabBar from "./TabBar_partner";
+import DashboardContent from "./DashboardContent";
+import ShipmentsContent from "./ShipmentsContent";
+import CustomersContent from "./CustomersContent";
+import SettingsContent from "./SettingsContent";
+import AvailableOrders from "./AvailableOrders";
 function HomePartner() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  
+  const [activeTab, setActiveTab] = useState("dashboard");
+
   // Function to render content based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard':
+      case "dashboard":
         return (
           <>
             <div className="orange-banner partner"></div>
             <PackageSearch />
             <RecentShipping />
+            <AvailableOrders />
           </>
         );
-      case 'shipments':
+      case "shipments":
         return <ShipmentsContent />;
-      case 'customers':
+      case "customers":
         return <CustomersContent />;
-      case 'settings':
+      case "settings":
         return <SettingsContent />;
       default:
         return null;

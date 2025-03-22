@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@firebase/app-check": "^0.8.13",
+    "@google/generative-ai": "^0.24.0",
     "@googlemaps/js-api-loader": "^1.16.8",
     "@mapbox/polyline": "^1.2.1",
     "@react-google-maps/api": "^2.20.6",
