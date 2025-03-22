@@ -66,9 +66,7 @@ function RecentShipping() {
             <div
               className={`shipment-status ${shipment.statusColor.toLowerCase()}`}
             >
-              {shipment.status === "On the way"
-                ? `${shipment.status} • Arrives on`
-                : shipment.status}
+              {shipment.status}
               <span className="arrival-date">{shipment.arrivalDate}</span>
             </div>
           </div>
