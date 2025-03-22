@@ -19,7 +19,111 @@ const MapComponent = () => {
 
   const API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const mapContainerStyle = { width: '100%', height: '400px' };
-  const defaultCenter = { lat: 40.7128, lng: -74.0060 };
+
+  // Get current location and initialize map
+  const initializeWithCurrentLocation = async (google) => {
+    try {
+      const position = await new Promise((resolve, reject) => {
+        if (!navigator.geolocation) {
+          reject(new Error('Geolocation is not supported by your browser'));
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const coords = {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      };
+      setOriginCoords(coords);
+
+      // Initialize map with current location
+      const mapInstance = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: coords.latitude, lng: coords.longitude },
+        zoom: 15,
+      });
+      setMap(mapInstance);
+
+      // Add marker for current location
+      new google.maps.Marker({
+        position: { lat: coords.latitude, lng: coords.longitude },
+        map: mapInstance,
+        label: 'A'
+      });
+
+      // Get address for the current location
+      try {
+        const geocoder = new google.maps.Geocoder();
+        const result = await geocoder.geocode({ 
+          location: { lat: coords.latitude, lng: coords.longitude }
+        });
+        if (result.results[0]) {
+          setOrigin(result.results[0].formatted_address);
+        }
+      } catch (error) {
+        console.error('Error getting address:', error);
+      }
+
+      return mapInstance;
+    } catch (error) {
+      console.error('Error getting location:', error);
+      setError('Could not get your current location. Initializing with default location.');
+      
+      // Fall back to default location
+      const mapInstance = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: 20.5937, lng: 78.9629 }, // Center of India
+        zoom: 5,
+      });
+      setMap(mapInstance);
+      return mapInstance;
+    }
+  };
+
+  // Get current location on button click
+  const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const coords = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        setOriginCoords(coords);
+
+        if (map) {
+          const center = { lat: coords.latitude, lng: coords.longitude };
+          map.setCenter(center);
+          map.setZoom(15);
+          
+          // Add marker for current location
+          new google.maps.Marker({
+            position: center,
+            map: map,
+            label: 'A'
+          });
+
+          // Get address for the current location
+          try {
+            const geocoder = new window.google.maps.Geocoder();
+            const result = await geocoder.geocode({ location: center });
+            if (result.results[0]) {
+              setOrigin(result.results[0].formatted_address);
+            }
+          } catch (error) {
+            console.error('Error getting address:', error);
+          }
+        }
+      },
+      (error) => {
+        console.error('Error getting location:', error);
+        setError('Could not get your current location. Please enter it manually.');
+      }
+    );
+  };
 
   useEffect(() => {
     const loader = new Loader({
@@ -29,13 +133,8 @@ const MapComponent = () => {
     });
 
     loader.load()
-      .then((google) => {
-        // Initialize the map
-        const map = new google.maps.Map(document.getElementById("map"), {
-          center: defaultCenter,
-          zoom: 12,
-        });
-        setMap(map);
+      .then(async (google) => {
+        const mapInstance = await initializeWithCurrentLocation(google);
 
         // Initialize autocomplete for origin
         const originAutocomplete = new google.maps.places.Autocomplete(
@@ -52,21 +151,20 @@ const MapComponent = () => {
         // Set up origin place changed listener
         originAutocomplete.addListener('place_changed', () => {
           const place = originAutocomplete.getPlace();
-          console.log('Origin place:', place);
           if (place.geometry) {
             setOrigin(place.formatted_address);
             setOriginCoords({
               latitude: place.geometry.location.lat(),
               longitude: place.geometry.location.lng()
             });
-            map.setCenter(place.geometry.location);
+            mapInstance.setCenter(place.geometry.location);
+            mapInstance.setZoom(15);
           }
         });
 
         // Set up destination place changed listener
         destinationAutocomplete.addListener('place_changed', () => {
           const place = destinationAutocomplete.getPlace();
-          console.log('Destination place:', place);
           if (place.geometry) {
             setDestination(place.formatted_address);
             setDestinationCoords({
@@ -158,7 +256,7 @@ const MapComponent = () => {
     <div className="route-planner">
       <form onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
         <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1, position: 'relative' }}>
             <input
               id="origin-input"
               type="text"
@@ -167,6 +265,23 @@ const MapComponent = () => {
               onChange={(e) => setOrigin(e.target.value)}
               style={{ width: '100%', padding: '8px' }}
             />
+            {/* <button
+              type="button"
+              onClick={getCurrentLocation}
+              style={{
+                position: 'absolute',
+                right: '8px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: '#007bff',
+                fontSize: '14px'
+              }}
+            >
+              📍 Current
+            </button> */}
           </div>
           <div style={{ flex: 1 }}>
             <input
