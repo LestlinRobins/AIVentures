@@ -329,7 +329,6 @@ input:checked + .slider:before {
   --orange-color: #ff7f27;
   --text-color: #ffffff;
   --secondary-text: #8e8e93;
-    width: 100px;
 
 }
 
@@ -348,6 +347,7 @@ body {
 
 .app-container {
   width: 100%;
+  max-width: 1280px;
   margin: 0 auto;
   padding: 16px;
   background-color: var(--background-color);
