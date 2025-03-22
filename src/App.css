@@ -332,10 +332,7 @@ input:checked + .slider:before {
   --orange-color: #ff7f27;
   --text-color: #ffffff;
   --secondary-text: #8e8e93;
-<<<<<<< HEAD
   
-=======
->>>>>>> 82f06d0eb226d3bfc15dfa0c3be0ff5d221ddf1c
 }
 
 body {
@@ -353,6 +350,7 @@ body {
 .app-container {
   width: 100%;
   margin: 0 auto;
+  padding: 16px;
   background-color: var(--background-color);
   min-height: 100vh;
   position: relative;
@@ -988,8 +986,4 @@ input:checked + .slider:before {
 
 .switch.small input:checked + .slider:before {
   transform: translateX(16px);
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> 82f06d0eb226d3bfc15dfa0c3be0ff5d221ddf1c
+} 
