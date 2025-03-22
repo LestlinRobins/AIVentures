@@ -45,20 +45,24 @@ function CalendarContent() {
         <h2>Hi there, what do you want to do today?</h2>
         <AIInput />
       </div>
-      <div style={popupStyles}>
-        <p>Eco mode enabled</p>
-        <p>
-          This mode will reduce the amount of energy used by the vehicle. Your
-          orders might take a tad bit longer to get picked up, but it'll be
-          worth it.
-          <br />
-          <br />
-          Thank you for saving the planet!
-        </p>
-        <button style={buttonStyles} onClick={handleDismiss}>
-          Dismiss
-        </button>
-      </div>
+      {showPopup && (
+        <div className="eco-mode-container">
+          <div style={popupStyles}>
+            <p>Eco mode enabled</p>
+            <p>
+              This mode will reduce the amount of energy used by the vehicle.
+              Your orders might take a tad bit longer to get picked up, but
+              it'll be worth it.
+              <br />
+              <br />
+              Thank you for saving the planet!
+            </p>
+            <button style={buttonStyles} onClick={handleDismiss}>
+              Dismiss
+            </button>
+          </div>
+        </div>
+      )}
       <div className="button-card">
         <label className="switch">
           <input type="checkbox" onInput={handleEcoModeChange} />
