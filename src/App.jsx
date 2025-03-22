@@ -4,13 +4,15 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import MapComponent from './components/MapComponent'
 import DeliveryGeminiChatbot from './components/DeliveryGeminiChatbot'
+import DeliveryRouteOptimizer from './components/DeliveryRouteOptimizer'
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      <MapComponent />
+      {/* <MapComponent /> */}
       <DeliveryGeminiChatbot/>
+      <DeliveryRouteOptimizer/>
     </>
   )
 }
