@@ -1,20 +1,20 @@
-import { useState } from 'react';
-import Header from './Header';
-import PackageSearch from './PackageSearch';
-import RecentShipping from './RecentShipping';
-import TabBar from './TabBar';
+import { useState } from "react";
+import Header from "./Header";
+import PackageSearch from "./PackageSearch";
+import RecentShipping from "./RecentShipping";
+import TabBar from "./TabBar";
 //import CalendarContent from './CalendarContent';
-import NotificationsContent from './NotificationsContent';
-import ProfileContent from './ProfileContent';
-import CalendarContent from './CalendarContent';
+import NotificationsContent from "./NotificationsContent";
+import ProfileContent from "./ProfileContent";
+import CalendarContent from "./CalendarContent";
 
 function Home() {
-  const [activeTab, setActiveTab] = useState('home');
-  
+  const [activeTab, setActiveTab] = useState("home");
+
   // Function to render content based on active tab
   const renderContent = () => {
     switch (activeTab) {
-      case 'home':
+      case "home":
         return (
           <>
             <div className="orange-banner"></div>
@@ -22,11 +22,11 @@ function Home() {
             <RecentShipping />
           </>
         );
-      case 'calendar':
+      case "calendar":
         return <CalendarContent />;
-      case 'notifications':
+      case "notifications":
         return <NotificationsContent />;
-      case 'profile':
+      case "profile":
         return <ProfileContent />;
       default:
         return null;

@@ -1,27 +1,4 @@
-// function Header({ name, date, points }) {
-//     return (
-//       <div className="header">
-//         <div className="user-info">
-//           <div className="avatar">
-//             <div className="avatar-circle"></div>
-//           </div>
-//           <div className="user-details">
-//             <div className="user-name">{name}</div>
-//             <div className="user-date">{date}</div>
-//           </div>
-//         </div>
-//         <div className="points-container">
-//           <div className="points">Points</div>
-//           <div className="points-value">{points}</div>
-//         </div>
-//       </div>
-//     );
-//   }
-  
-//   export default Header;
-  
-
-import { User } from 'lucide-react';
+import { User } from "lucide-react";
 
 function Header({ name, date, points }) {
   return (
@@ -37,7 +14,7 @@ function Header({ name, date, points }) {
       </div>
       <div className="points-container">
         <div className="points">Points</div>
-        <div className="points-value">{points}</div>
+        <div>{points}</div>
       </div>
     </div>
   );
