@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "../styles/DeliveryRouteOptimizer.css";
+import Papa from "papaparse";
 
 // Fix for Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
@@ -31,12 +32,17 @@ const DeliveryRouteOptimizer = () => {
   const [mapInitialized, setMapInitialized] = useState(false);
   const [isLocating, setIsLocating] = useState(false);
   const [locationError, setLocationError] = useState(null);
+  const [delayContainer, showDelayContainer] = useState(false);
+  const [csvData, setCsvData] = useState(null);
+  const [groupedRoutes, setGroupedRoutes] = useState({});
+  const [selectedStartLocation, setSelectedStartLocation] = useState(null);
 
   const mapRef = useRef(null);
   const leafletMap = useRef(null);
   const routingControl = useRef(null);
   const suggestionRefs = useRef({});
   const currentLocationMarker = useRef(null);
+  const fileInputRef = useRef(null);
 
   // Initialize map
   useEffect(() => {
@@ -309,28 +315,43 @@ const DeliveryRouteOptimizer = () => {
     }
 
     try {
+      console.log("Starting route optimization...");
+      console.log("Locations:", locations);
+
       // Remove previous routing control if exists
       if (routingControl.current) {
+        console.log("Removing previous routing control");
         leafletMap.current.removeControl(routingControl.current);
       }
 
       const waypoints = locations.map((loc) => L.latLng(loc.lat, loc.lng));
+      console.log("Waypoints:", waypoints);
 
       // Initialize routing control with OSRM
       routingControl.current = L.Routing.control({
         waypoints: waypoints,
         routeWhileDragging: false,
-        showAlternatives: true,
+        showAlternatives: false,
         fitSelectedRoutes: true,
         router: L.Routing.osrmv1({
           serviceUrl: "https://router.project-osrm.org/route/v1",
           profile: "driving",
         }),
         lineOptions: {
-          styles: [{ color: "#ff7f27", weight: 6, opacity: 0.8 }], // Updated route color
+          styles: [
+            {
+              color: "#ff7f27",
+              weight: 6,
+              opacity: 0.8,
+              dashArray: null,
+              className: "route-line",
+            },
+          ],
           extendToWaypoints: true,
           missingRouteTolerance: 0,
         },
+        addWaypoints: true,
+        draggableWaypoints: false,
         createMarker: function (i, wp) {
           let icon;
           if (i === 0) {
@@ -357,12 +378,24 @@ const DeliveryRouteOptimizer = () => {
           }
           return L.marker(wp.latLng, { icon: icon });
         },
-      }).addTo(leafletMap.current);
+      });
+
+      console.log("Adding routing control to map");
+      routingControl.current.addTo(leafletMap.current);
 
       // Extract route information when route is calculated
       routingControl.current.on("routesfound", (e) => {
+        console.log("Route found:", e);
         const routes = e.routes;
         const route = routes[0];
+
+        if (route && route.bounds) {
+          console.log("Fitting bounds:", route.bounds);
+          leafletMap.current.fitBounds(route.bounds, {
+            padding: [50, 50],
+            maxZoom: 15,
+          });
+        }
 
         setRouteInfo({
           distance: (route.summary.totalDistance / 1000).toFixed(2),
@@ -373,31 +406,54 @@ const DeliveryRouteOptimizer = () => {
         // Force map update after route is found
         setTimeout(() => {
           if (leafletMap.current) {
+            console.log("Updating map view");
             leafletMap.current.invalidateSize();
-            leafletMap.current.fitBounds(L.latLngBounds(waypoints));
+            if (route && route.bounds) {
+              leafletMap.current.fitBounds(route.bounds, {
+                padding: [50, 50],
+                maxZoom: 15,
+              });
+            }
           }
         }, 100);
 
         setIsOptimizing(false);
       });
+
+      // Handle routing errors
+      routingControl.current.on("routingerror", (e) => {
+        console.error("Routing error:", e);
+        setError(
+          "Failed to calculate route. Please check the locations and try again."
+        );
+        setIsOptimizing(false);
+      });
     } catch (err) {
+      console.error("Error optimizing route:", err);
       setError("Error optimizing route: " + err.message);
       setIsOptimizing(false);
     }
   };
 
-  // Add effect to handle map resize on view change
+  // Add an effect to handle map resize when switching between locations
   useEffect(() => {
-    if (leafletMap.current) {
-      setTimeout(() => {
+    if (leafletMap.current && locations.length > 0) {
+      const resizeMap = () => {
         leafletMap.current.invalidateSize();
-        if (routeInfo && routingControl.current) {
+        if (routingControl.current) {
           const waypoints = locations.map((loc) => L.latLng(loc.lat, loc.lng));
           leafletMap.current.fitBounds(L.latLngBounds(waypoints));
         }
-      }, 300);
+      };
+
+      window.addEventListener("resize", resizeMap);
+      setTimeout(resizeMap, 100);
+
+      return () => {
+        window.removeEventListener("resize", resizeMap);
+      };
     }
-  }, [routeInfo]);
+  }, [locations, selectedStartLocation]);
 
   // Get location label
   const getLocationLabel = (locationType, index) => {
@@ -423,21 +479,239 @@ const DeliveryRouteOptimizer = () => {
     }
   };
 
-  // Add an effect to handle map resize when container changes
-  useEffect(() => {
-    if (leafletMap.current) {
-      const resizeMap = () => {
-        leafletMap.current.invalidateSize();
-      };
+  // Function to get coordinates using Gemini API
+  const getCoordinatesWithGemini = async (address) => {
+    try {
+      console.log("Fetching coordinates for address using Gemini:", address);
 
-      window.addEventListener("resize", resizeMap);
-      setTimeout(resizeMap, 100);
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCGwilY73QqP_92bm-uZNxjOZieGCMd-r8",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `Get the exact latitude and longitude coordinates for this location: ${address}. Return only the coordinates in the format: "latitude,longitude"`,
+                  },
+                ],
+              },
+            ],
+          }),
+        }
+      );
 
-      return () => {
-        window.removeEventListener("resize", resizeMap);
+      if (!response.ok) {
+        throw new Error(`Gemini API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Gemini response:", data);
+
+      // Extract coordinates from Gemini's response
+      const coordinatesText = data.candidates[0].content.parts[0].text;
+      const [lat, lng] = coordinatesText
+        .split(",")
+        .map((coord) => parseFloat(coord.trim()));
+
+      if (isNaN(lat) || isNaN(lng)) {
+        throw new Error("Invalid coordinates received from Gemini");
+      }
+
+      return {
+        lat,
+        lng,
+        display_name: address,
       };
+    } catch (error) {
+      console.error("Error getting coordinates from Gemini:", error);
+      return null;
     }
-  }, [routeInfo]); // Re-run when switching between planning and navigation views
+  };
+
+  // Function to process CSV data and group by start locations
+  const processCSVData = async (data) => {
+    console.log("Processing CSV data:", data);
+    const grouped = {};
+
+    // Process each row and get coordinates
+    for (const row of data) {
+      console.log("Processing row:", row);
+
+      // Skip rows with missing data
+      if (!row.Start || !row.End) {
+        console.log("Skipping row with missing data");
+        continue;
+      }
+
+      // Clean up the addresses
+      const startAddress = row.Start.trim();
+      const endAddress = row.End.trim();
+
+      console.log("Processing addresses:", { startAddress, endAddress });
+
+      // Add delay between requests to respect API rate limits
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const startCoords = await getCoordinatesWithGemini(startAddress);
+      const endCoords = await getCoordinatesWithGemini(endAddress);
+
+      console.log("Coordinates:", { startCoords, endCoords });
+
+      if (startCoords && endCoords) {
+        if (!grouped[startAddress]) {
+          grouped[startAddress] = {
+            coordinates: startCoords,
+            destinations: [],
+          };
+        }
+
+        grouped[startAddress].destinations.push({
+          address: endAddress,
+          coordinates: endCoords,
+        });
+      } else {
+        console.log("Failed to get coordinates for:", {
+          start: startAddress,
+          end: endAddress,
+        });
+      }
+    }
+
+    console.log("Grouped routes:", grouped);
+    setGroupedRoutes(grouped);
+
+    // Set the first start location as selected if available
+    const firstLocation = Object.keys(grouped)[0];
+    if (firstLocation) {
+      setSelectedStartLocation(firstLocation);
+      loadRouteForStartLocation(firstLocation, grouped[firstLocation]);
+    }
+  };
+
+  // Function to handle CSV file upload
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      Papa.parse(file, {
+        header: true,
+        transformHeader: (header) => {
+          // Clean up header names
+          return header.trim().replace(/^["']|["']$/g, "");
+        },
+        transform: (value) => {
+          // Clean up values
+          return value.trim().replace(/^["']|["']$/g, "");
+        },
+        complete: (results) => {
+          console.log("Parsed CSV data:", results.data);
+          // Filter out empty rows and ensure required columns exist
+          const validData = results.data.filter(
+            (row) =>
+              row.Start &&
+              row.End &&
+              row.Start.trim() !== "" &&
+              row.End.trim() !== ""
+          );
+          console.log("Valid data:", validData);
+          setCsvData(validData);
+          processCSVData(validData);
+        },
+        error: (error) => {
+          console.error("Error parsing CSV:", error);
+          setError("Failed to parse CSV file");
+        },
+      });
+    }
+  };
+
+  // Function to load route for a specific start location
+  const loadRouteForStartLocation = (startLocation, routeData) => {
+    console.log("Loading route for:", startLocation);
+    console.log("Route data:", routeData);
+
+    if (!routeData || !routeData.coordinates || !routeData.destinations) {
+      console.error("Invalid route data:", routeData);
+      return;
+    }
+
+    const newLocations = [
+      {
+        type: "start",
+        address: startLocation,
+        lat: routeData.coordinates.lat,
+        lng: routeData.coordinates.lng,
+      },
+      ...routeData.destinations.map((dest) => ({
+        type: "waypoint",
+        address: dest.address || dest.coordinates.display_name,
+        lat: dest.coordinates.lat,
+        lng: dest.coordinates.lng,
+      })),
+    ];
+
+    console.log("New locations:", newLocations);
+    setLocations(newLocations);
+    setSelectedStartLocation(startLocation);
+
+    // Ensure map is initialized and visible
+    if (leafletMap.current) {
+      // Center map on the start location
+      leafletMap.current.setView(
+        [routeData.coordinates.lat, routeData.coordinates.lng],
+        13
+      );
+
+      // Force a resize event to ensure the map fills the container
+      setTimeout(() => {
+        leafletMap.current.invalidateSize();
+        window.dispatchEvent(new Event("resize"));
+      }, 100);
+    }
+
+    // Automatically optimize route after loading locations
+    setTimeout(() => optimizeRoute(), 500);
+  };
+
+  // Add file upload button to the UI
+  const renderFileUpload = () => (
+    <div className="file-upload-section">
+      <input
+        type="file"
+        ref={fileInputRef}
+        accept=".csv"
+        onChange={handleFileUpload}
+        style={{ display: "none" }}
+      />
+      <button
+        className="upload-button"
+        onClick={() => fileInputRef.current.click()}
+      >
+        Upload Delivery Data (CSV)
+      </button>
+
+      {Object.keys(groupedRoutes).length > 0 && (
+        <div className="start-locations-list">
+          <h3>Starting Locations</h3>
+          {Object.entries(groupedRoutes).map(([location, data]) => (
+            <button
+              key={location}
+              className={`start-location-button ${
+                selectedStartLocation === location ? "selected" : ""
+              }`}
+              onClick={() => loadRouteForStartLocation(location, data)}
+            >
+              {location} ({data.destinations.length} deliveries)
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="optimizer-container">
@@ -459,137 +733,146 @@ const DeliveryRouteOptimizer = () => {
         /* Route Planning Section */
         <div className="route-planning-section">
           <h1 className="optimizer-title">Delivery Route Optimizer</h1>
+          {renderFileUpload()}
 
-          <div className="optimizer-layout">
-            {/* Left panel - Inputs */}
-            <div className="left-panel">
-              <div className="info-panel">
-                <h2 className="panel-heading">Route Information</h2>
+          {/* Only show the regular input panel if no CSV data is loaded */}
+          {!csvData && (
+            <div className="optimizer-layout">
+              {/* Left panel - Inputs */}
+              <div className="left-panel">
+                <div className="info-panel">
+                  <h2 className="panel-heading">Route Information</h2>
 
-                {locations.map((location, index) => (
-                  <div
-                    key={index}
-                    className={`location-card ${getLocationTypeClass(
-                      location.type
-                    )}`}
-                  >
-                    <div className="location-header">
-                      <label className="location-label">
-                        {getLocationLabel(location.type, index)}
-                      </label>
-                      {location.type === "waypoint" && (
-                        <button
-                          type="button"
-                          onClick={() => removeWaypoint(index)}
-                          className="remove-button"
-                          aria-label="Remove waypoint"
-                        >
-                          ✕
-                        </button>
-                      )}
-                      {location.type === "start" && (
-                        <button
-                          type="button"
-                          onClick={getCurrentLocation}
-                          disabled={isLocating}
-                          className={
-                            isLocating
-                              ? "use-current-location-button disabled"
-                              : "use-current-location-button"
-                          }
-                          title="Use my current location"
-                        >
-                          {isLocating ? "Locating..." : "Use My Location"}
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="location-input-container">
-                      <input
-                        type="text"
-                        value={location.address}
-                        onChange={(e) =>
-                          handleLocationChange(index, e.target.value)
-                        }
-                        onFocus={() => setActiveInput(index)}
-                        className="location-input"
-                        placeholder={`Enter ${
-                          location.type === "start"
-                            ? "starting"
-                            : location.type === "end"
-                            ? "destination"
-                            : "waypoint"
-                        } address`}
-                      />
-
-                      {activeInput === index &&
-                        (suggestions[index]?.length > 0 ||
-                          isLoadingSuggestions[index]) && (
-                          <div
-                            ref={(ref) => (suggestionRefs.current[index] = ref)}
-                            className="suggestions-dropdown"
+                  {locations.map((location, index) => (
+                    <div
+                      key={index}
+                      className={`location-card ${getLocationTypeClass(
+                        location.type
+                      )}`}
+                    >
+                      <div className="location-header">
+                        <label className="location-label">
+                          {getLocationLabel(location.type, index)}
+                        </label>
+                        {location.type === "waypoint" && (
+                          <button
+                            type="button"
+                            onClick={() => removeWaypoint(index)}
+                            className="remove-button"
+                            aria-label="Remove waypoint"
                           >
-                            {isLoadingSuggestions[index] ? (
-                              <div className="suggestion-loading">
-                                Loading suggestions...
-                              </div>
-                            ) : (
-                              <ul className="suggestions-list">
-                                {suggestions[index]?.map((suggestion, i) => (
-                                  <li
-                                    key={i}
-                                    onClick={() =>
-                                      handleSelectSuggestion(index, suggestion)
-                                    }
-                                    className="suggestion-item"
-                                  >
-                                    {suggestion.display_name}
-                                  </li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
+                            ✕
+                          </button>
                         )}
-                    </div>
-
-                    {location.lat && location.lng && (
-                      <div className="coordinates-display">
-                        Selected: {location.lat.toFixed(5)},{" "}
-                        {location.lng.toFixed(5)}
+                        {location.type === "start" && (
+                          <button
+                            type="button"
+                            onClick={getCurrentLocation}
+                            disabled={isLocating}
+                            className={
+                              isLocating
+                                ? "use-current-location-button disabled"
+                                : "use-current-location-button"
+                            }
+                            title="Use my current location"
+                          >
+                            {isLocating ? "Locating..." : "Use My Location"}
+                          </button>
+                        )}
                       </div>
-                    )}
-                  </div>
-                ))}
 
-                {locationError && (
-                  <div className="location-error">{locationError}</div>
-                )}
+                      <div className="location-input-container">
+                        <input
+                          type="text"
+                          value={location.address}
+                          onChange={(e) =>
+                            handleLocationChange(index, e.target.value)
+                          }
+                          onFocus={() => setActiveInput(index)}
+                          className="location-input"
+                          placeholder={`Enter ${
+                            location.type === "start"
+                              ? "starting"
+                              : location.type === "end"
+                              ? "destination"
+                              : "waypoint"
+                          } address`}
+                        />
 
-                <button
-                  type="button"
-                  onClick={addWaypoint}
-                  className="add-waypoint-button"
-                >
-                  + Add Waypoint
-                </button>
+                        {activeInput === index &&
+                          (suggestions[index]?.length > 0 ||
+                            isLoadingSuggestions[index]) && (
+                            <div
+                              ref={(ref) =>
+                                (suggestionRefs.current[index] = ref)
+                              }
+                              className="suggestions-dropdown"
+                            >
+                              {isLoadingSuggestions[index] ? (
+                                <div className="suggestion-loading">
+                                  Loading suggestions...
+                                </div>
+                              ) : (
+                                <ul className="suggestions-list">
+                                  {suggestions[index]?.map((suggestion, i) => (
+                                    <li
+                                      key={i}
+                                      onClick={() =>
+                                        handleSelectSuggestion(
+                                          index,
+                                          suggestion
+                                        )
+                                      }
+                                      className="suggestion-item"
+                                    >
+                                      {suggestion.display_name}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                            </div>
+                          )}
+                      </div>
 
-                <button
-                  type="button"
-                  onClick={optimizeRoute}
-                  disabled={isOptimizing || !mapInitialized}
-                  className={
-                    isOptimizing || !mapInitialized
-                      ? "calculate-button disabled"
-                      : "calculate-button"
-                  }
-                >
-                  {isOptimizing ? "Optimizing..." : "Calculate Optimal Route"}
-                </button>
+                      {location.lat && location.lng && (
+                        <div className="coordinates-display">
+                          Selected: {location.lat.toFixed(5)},{" "}
+                          {location.lng.toFixed(5)}
+                        </div>
+                      )}
+                    </div>
+                  ))}
 
-                {error && <div className="error-message">{error}</div>}
+                  {locationError && (
+                    <div className="location-error">{locationError}</div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={addWaypoint}
+                    className="add-waypoint-button"
+                  >
+                    + Add Waypoint
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={optimizeRoute}
+                    disabled={isOptimizing || !mapInitialized}
+                    className={
+                      isOptimizing || !mapInitialized
+                        ? "calculate-button disabled"
+                        : "calculate-button"
+                    }
+                  >
+                    {isOptimizing ? "Optimizing..." : "Calculate Optimal Route"}
+                  </button>
+
+                  {error && <div className="error-message">{error}</div>}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
       ) : (
         /* Navigation View Section */
