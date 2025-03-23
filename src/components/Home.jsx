@@ -17,7 +17,22 @@ function Home() {
       case "home":
         return (
           <>
-            <div className="orange-banner"></div>
+            <div className="orange-banner">
+              <div className="dashboard-stats">
+                <div className="stat-item">
+                  <span className="stat-value">23%</span>
+                  <span className="stat-label">Time Saved</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-value">32%</span>
+                  <span className="stat-label">CO2 Reduced</span>
+                </div>
+                <div className="stat-item">
+                  <span className="stat-value">12%</span>
+                  <span className="stat-label">Cost Saved</span>
+                </div>
+              </div>
+            </div>
             <PackageSearch />
             <RecentShipping />
           </>

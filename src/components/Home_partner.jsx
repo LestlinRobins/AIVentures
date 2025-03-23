@@ -17,7 +17,22 @@ function HomePartner() {
       case "dashboard":
         return (
           <>
-            <div className="orange-banner partner"></div>
+            <div className="orange-banner partner">
+              <div className="partner-dashboard-stats">
+                <div className="partner-stat-item">
+                  <span className="partner-stat-value">19%</span>
+                  <span className="partner-stat-label">More Revenue</span>
+                </div>
+                <div className="partner-stat-item">
+                  <span className="partner-stat-value">22%</span>
+                  <span className="partner-stat-label">More Customers</span>
+                </div>
+                <div className="partner-stat-item">
+                  <span className="partner-stat-value">8%</span>
+                  <span className="partner-stat-label">Fuel Saved</span>
+                </div>
+              </div>
+            </div>
             <PackageSearch />
             <RecentShipping />
             <AvailableOrders />
