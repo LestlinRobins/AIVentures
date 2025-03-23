@@ -30,9 +30,10 @@ const AIInput = ({ onDataReady }) => {
        "numberOfPackages": [number],
        "weightPerPackage": "1kg",
        "volumePerPackage": "0.1m³",
-       "priorityLevel": "standard"
+       "priorityLevel": "standard",
+       "vehicleType": "[value]"
      }
-
+The [value] can be "car", "bike", "truck", "van", "motorcycle", "bicycle", "bus", depending on the load and the number of packages, size of the packages, etc.
   CRITICAL RULES:
   - Focus ONLY on collecting start location, end location, and number of packages
   - Use default values for weight, volume, and priority
