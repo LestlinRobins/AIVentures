@@ -1,0 +1,32 @@
+{
+  "name": "Del.AI",
+  "short_name": "DelAI",
+  "description": "Reducing delivery delays, the AI way",
+  "categories": [
+    "delivery",
+    "logistics",
+    "tool",
+    "warehouse",
+    "shipping",
+    "transportation",
+    "automation",
+    "ai"
+  ],
+  "theme_color": "#000000",
+  "background_color": "#000000",
+  "display": "standalone",
+  "orientation": "natural",
+  "start_url": "/?application=true",
+  "icons": [
+    {
+      "src": "react.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "react.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
