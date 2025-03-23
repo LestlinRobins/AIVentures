@@ -3,19 +3,28 @@
   border-radius: 8px;
   padding-left: 0px;
   max-width: 800px;
-  width: 100%;
+  width: 90%;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
+
 .ai-input-container h2 {
   margin-bottom: -10px;
   padding-bottom: 0px;
   align-self: center;
+  color: #ffffff;
 }
+
 .conversation-container {
+  display: flex;
+  flex-direction: column;
   max-height: 400px;
+  overflow-y: auto;
   margin-bottom: 20px;
   padding: 0px;
+  align-self: center;
+  background-color: transparent;
+  margin-left: -10px;
 }
 
 .message {
@@ -23,6 +32,7 @@
   padding: 12px;
   border-radius: 8px;
   max-width: 80%;
+  word-wrap: break-word;
 }
 
 .message.user {
@@ -91,7 +101,9 @@
   background-color: #2c2c2e;
   border-radius: 8px;
   padding: 16px;
-  margin: 20px 0;
+  width: 112%;
+  margin: 20px auto;
+  display: flex;
 }
 
 .delivery-table-container h3 {
@@ -122,8 +134,55 @@
   font-weight: 500;
   color: #8e8e93;
   width: 40%;
+  text-transform: capitalize;
 }
 
 .delivery-table td.value {
   color: #ffffff;
+}
+
+/* Additional styling for confirmation elements */
+.confirmation-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 112%;
+}
+
+.confirm-button {
+  margin-top: 20px;
+  padding: 12px 30px;
+  background-color: #ff7f27;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.confirm-button:hover {
+  background-color: #ff6b0e;
+}
+
+.confirmation-message {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #2c2c2e;
+  border: 1px solid #3a3a3c;
+  border-radius: 8px;
+  color: #ffffff;
+  text-align: center;
+  width: 112%;
+}
+
+.priority-notice {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #ff7f27;
+  background-color: rgba(255, 127, 39, 0.1);
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #ff7f27;
 }
