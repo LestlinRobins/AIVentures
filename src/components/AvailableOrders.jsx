@@ -1,7 +1,11 @@
 import { useState } from "react";
 import "./AvailableOrders.css";
+import DeliveryRouteOptimizer from "./DeliveryRouteOptimizer";
 
 function AvailableOrders() {
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showOptimizer, setShowOptimizer] = useState(false);
+
   const orders = [
     {
       id: "Xtwr321",
@@ -40,6 +44,35 @@ function AvailableOrders() {
       priorityLevel: "Standard",
     },
   ];
+
+  const handleAccept = (order) => {
+    setSelectedOrder(order);
+    setShowOptimizer(true);
+  };
+
+  const handleBack = () => {
+    setSelectedOrder(null);
+    setShowOptimizer(false);
+  };
+
+  if (showOptimizer && selectedOrder) {
+    return (
+      <div className="delivery-optimizer-container">
+        <button className="back-button" onClick={handleBack}>
+          ← Back to Orders
+        </button>
+        <DeliveryRouteOptimizer
+          startLocation={selectedOrder.startlocation}
+          endLocation={selectedOrder.endlocation}
+          numberOfPackages={selectedOrder.numberOfPackages}
+          weightPerPackage={selectedOrder.weightPerPackage}
+          volumePerPackage={selectedOrder.volumePerPackage}
+          priorityLevel={selectedOrder.priorityLevel}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="available-orders-container">
       <h2>Available Orders</h2>
@@ -70,7 +103,14 @@ function AvailableOrders() {
                 </td>
                 <td>{order.customer}</td>
                 <td>{order.status}</td>
-                <td>{order.action}</td>
+                <td>
+                  <button
+                    className="accept-button"
+                    onClick={() => handleAccept(order)}
+                  >
+                    Accept
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
