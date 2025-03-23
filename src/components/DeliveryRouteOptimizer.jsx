@@ -285,7 +285,63 @@ const DeliveryRouteOptimizer = () => {
     }
   };
 
-  // Optimize route
+  // Function to train the model and predict delays
+  const predictDelay = async (location) => {
+    try {
+      console.log("Predicting delay for location:", location);
+
+      const response = await fetch(
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=AIzaSyCGwilY73QqP_92bm-uZNxjOZieGCMd-r8",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: `Based on the training data:
+                    Location,Climbing,Building,Security
+                    Kochi, Kerala, India,3,4,2
+                    Kochi, Kerala, India,4,3,2
+                    Kochi, Kerala, India,3,3,3
+                    Kochi, Kerala, India,4,4,2
+                    Kochi, Kerala, India,3,4,3
+                    
+                    Predict the delay in minutes for this location: ${location}
+                    Consider factors like climbing difficulty, building complexity, and security checks.
+                    Return only the number of minutes as a single integer.`,
+                  },
+                ],
+              },
+            ],
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Gemini API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const delayText = data.candidates[0].content.parts[0].text;
+      const delay = parseInt(delayText.trim());
+
+      if (isNaN(delay)) {
+        throw new Error("Invalid delay prediction");
+      }
+
+      console.log("Predicted delay:", delay, "minutes for", location);
+      return delay;
+    } catch (error) {
+      console.error("Error predicting delay:", error);
+      return 0; // Return 0 delay if prediction fails
+    }
+  };
+
+  // Modify the optimizeRoute function to include delays
   const optimizeRoute = async () => {
     setIsOptimizing(true);
     setError(null);
@@ -384,7 +440,7 @@ const DeliveryRouteOptimizer = () => {
       routingControl.current.addTo(leafletMap.current);
 
       // Extract route information when route is calculated
-      routingControl.current.on("routesfound", (e) => {
+      routingControl.current.on("routesfound", async (e) => {
         console.log("Route found:", e);
         const routes = e.routes;
         const route = routes[0];
@@ -397,9 +453,18 @@ const DeliveryRouteOptimizer = () => {
           });
         }
 
+        // Calculate total delay for all destinations
+        let totalDelay = 0;
+        for (let i = 1; i < locations.length; i++) {
+          const delay = await predictDelay(locations[i].address);
+          totalDelay += delay;
+        }
+
         setRouteInfo({
           distance: (route.summary.totalDistance / 1000).toFixed(2),
           duration: Math.round(route.summary.totalTime / 60),
+          delay: totalDelay,
+          totalTime: Math.round(route.summary.totalTime / 60) + totalDelay,
           waypoints: locations.length,
         });
 
@@ -713,6 +778,39 @@ const DeliveryRouteOptimizer = () => {
     </div>
   );
 
+  // Modify the navigation view to show delay information
+  const renderNavigationView = () => (
+    <div className="navigation-view">
+      <div className="status-bar">
+        <div className="time-remaining">
+          <span className="time-label">Time Remaining</span>
+          <span className="time-value">{routeInfo.totalTime} min</span>
+          {routeInfo.delay > 0 && (
+            <div className="delay-info">
+              <span className="delay-label">Including predicted delays:</span>
+              <span className="delay-value">+{routeInfo.delay} min</span>
+            </div>
+          )}
+        </div>
+        <div className="distance">
+          <span className="distance-value">{routeInfo.distance} km</span>
+        </div>
+      </div>
+
+      <button className="nav-button">
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path d="M12 2L19 21L12 17L5 21L12 2Z" fill="currentColor" />
+        </svg>
+      </button>
+    </div>
+  );
+
   return (
     <div className="optimizer-container">
       {/* Map Container - Always present */}
@@ -875,37 +973,7 @@ const DeliveryRouteOptimizer = () => {
           )}
         </div>
       ) : (
-        /* Navigation View Section */
-        <div className="navigation-view">
-          <div className="status-bar">
-            <div className="time-remaining">
-              <span className="time-label">Time Remaining</span>
-              <span className="time-value">{routeInfo.duration} min</span>
-            </div>
-            <div className="distance">
-              <span className="distance-value">{routeInfo.distance} km</span>
-            </div>
-          </div>
-
-          <button className="nav-button">
-            <svg
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M12 2L19 21L12 17L5 21L12 2Z" fill="currentColor" />
-            </svg>
-          </button>
-
-          <div className="turn-by-turn-card">
-            <div className="turn-instruction">
-              <div className="turn-icon">↰</div>
-              <span className="turn-text">Turn Left After 200 m</span>
-            </div>
-          </div>
-        </div>
+        renderNavigationView()
       )}
     </div>
   );
