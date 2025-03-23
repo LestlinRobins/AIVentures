@@ -5,15 +5,17 @@ A modern web application that optimizes delivery routes using real-time mapping,
 ## Features
 
 - 🗺️ Interactive map interface with real-time route visualization
+- 🚗 Dynamic Routes: AI-powered 10-minute updates adapt to traffic, weather & road conditions
+- ⏱️ Accurate ETAs: Precise delivery predictions accounting for stairs, security & delays
+- 🎯 Intelligent Planning: Instant optimized routes from simple delivery goals input
+- 🌱 Sustainable Performance: Smart vehicle selection for fuel efficiency & load safety
+- 📊 Actionable Insights: Performance dashboards tracking time saved & delivery success
+- ⚡ Critical Delivery Prioritization: Ensuring timely medical & elderly care deliveries
+- 🔄 Smart Driver Reassignment: Maintaining service continuity during disruptions
 - 📍 Multiple delivery points support with waypoints
-- 🚗 Real-time route optimization using OSRM
-- ⏱️ AI-powered delay predictions using Gemini 2.0 Flash
-- 📊 CSV data import for bulk route planning
 - 📱 Responsive design for mobile and desktop
 - 🌙 Dark theme optimized for delivery operations
-- 🔄 Real-time traffic and route updates
-- 📍 Current location detection
-- 🎯 Turn-by-turn navigation view
+- 📊 CSV data import for bulk route planning
 
 ## Tech Stack
 
@@ -36,8 +38,8 @@ A modern web application that optimizes delivery routes using real-time mapping,
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/delivery-route-optimizer.git
-cd delivery-route-optimizer
+git clone https://github.com/LestlinRobins/AIVentures.git
+cd AIVentures
 ```
 
 2. Install dependencies:
@@ -57,7 +59,7 @@ REACT_APP_GEMINI_API_KEY=your_api_key_here
 4. Start the development server:
 
 ```bash
-npm start
+npm run dev
 # or
 yarn start
 ```
@@ -127,6 +129,17 @@ src/
 - Handles route optimization
 - Calculates optimal paths between multiple points
 - Provides real-time traffic updates
+
+### Leaflet.js
+
+- Interactive map visualization
+- Custom markers for start/end points
+- Real-time route display
+- Responsive map controls
+- Layer management for route overlays
+- Supports multiple map providers
+- Handles map events and user interactions
+- Mobile-friendly touch controls
 
 ## Contributing
 
