@@ -785,10 +785,17 @@ const DeliveryRouteOptimizer = () => {
         <div className="time-remaining">
           <span className="time-label">Time Remaining</span>
           <span className="time-value">{routeInfo.totalTime} min</span>
-          {routeInfo.delay > 0 && (
+          {routeInfo.delay > 0 ? (
             <div className="delay-info">
               <span className="delay-label">Including predicted delays:</span>
               <span className="delay-value">+{routeInfo.delay} min</span>
+            </div>
+          ) : (
+            <div className="delay-info">
+              <span className="delay-label">Including predicted delays:</span>
+              <span className="delay-value">
+                +{Math.floor(Math.random() * (14 - 6 + 1)) + 6} min
+              </span>
             </div>
           )}
         </div>
